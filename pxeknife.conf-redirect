@@ -1,0 +1,6 @@
+default pxeknife-gui
+PROMPT 0
+TIMEOUT 1
+LABEL pxeknife-gui
+KERNEL vesamenu.c32
+append pxeknife/pxeknife-head.conf pxeknife/pxeknife-gui.conf
