@@ -1,0 +1,59 @@
+# This is the Prefix for your PXE Knife environment.
+# This Basically lets it know where things live in relation to the root directory
+# If you follow the instructions on http://pxeknife.erebor.org this will likely be
+# /pxeknife, for example
+PXEKNIFEPREFIX=/pxeknifetest
+
+#
+# Centos
+#
+# CENTOS defines which versions of Centos you wish to have available this can be:
+# 	- Specific version number E.G.:
+# 		- 5
+# 		- 5.1
+# 	- Specific version number w/ architecture
+# 		- 5.x86_64
+# 		- 5.i386
+# 	- Along with the following 'special' cases:
+# 		all			- Snag all versions, both 32-bit and 64-bit
+# 		all.i386		- Snag all version that are 32-bit
+# 		all.x86_64		- Snag all versions that are 64-bit
+# 		all_current		- Snag all current versions, both 32-bit and 64-bit
+# 		all_current.i386	- Snag all current versions that are 32-bit
+# 		all_current.x86_64	- Snag all current versions that are 64-bit
+# 		all_vault		- Snag all vault versions, both 32-bit and 64-bit
+# 		all_vault.i386		- Snag all vault versions that are 32-bit
+# 		all_vault.x86_64	- Snag all vault versions thare are 64-bit
+# 		all_ancient		- Snag all 'Ancient' versions (these are only 32-bit)
+# 		all_ancient.i386	- Snag all 'Ancient' versions (these are only 32-bit)
+#
+# 	Note: This is a space delimited list, quotes are not needed E.G.:
+# 		CENTOS = 5.1 5.2.i386 all_ancient
+#
+# 	Note: If left blank this disables Centos
+
+CENTOS = all
+
+# CENTOSMETHOD provides a mechanism to provide the installer with various additional command line
+# options
+# this *WILL* start out with 
+# 	method=<CENTOSMETHOD>
+# 	Options include:
+# 		- @URL@ - this will fill in the base URL from which is found the installer
+# 		- @VERSION@ - the numberic version of the installer
+# 		- @ARCH@ - the architecture that your installing
+# 		- @MAGICURL@ - this will use a known - predefined path for what your
+# 			       using, based on the base URL.  This *HIGHLY* assumes 
+# 			       your either using this with the default URLs, or that
+# 			       you have changed them to match a full mirror of the distro
+#
+# 	You can tack on additional options should you choose, like ip=dhcp so that a user
+# 	is not asked for their IP address settings.
+#
+# 	If this is left blank, askmethod is substituted
+#
+# 	see http://fedoraproject.org/wiki/Anaconda/Options for most options used by Anaconda,
+# 	though keep in mind this list may not be accurate for all versions of the distro.
+
+CENTOSMETHOD = @MAGICURL@ ip=dhcp
+
