@@ -31,4 +31,8 @@ make_statement:
 $(DIRS): make_statement
 	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="$(NEWCONFIG)" -C $@ -f Makefile
 
+clean: make_statement $(patsubst %,%.clean,$(DIRS))
+
+$(patsubst %,%.clean,$(DIRS)):
+	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="$(NEWCONFIG)" -C $(patsubst %.clean,%,$@) -f Makefile clean
 

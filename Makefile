@@ -28,13 +28,16 @@ configfile = label @LABEL@\n \
 
 all: make_statement $(DIRS)
 
-clean: make_statement
+clean: make_statement $(patsubst %,%.clean,$(DIRS))
 
 make_statement:
 	echo "Hello World!"
 
 $(DIRS): make_statement
 	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="../CONFIG" -C $@ -f Makefile
+
+$(patsubst %,%.clean,$(DIRS)):
+	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="../CONFIG" -C $(patsubst %.clean,%,$@) -f Makefile clean
 
 #boot_managers: make_statement
 #	$(MAKE) $(MFLAGS) CONFIG="../CONFIG" -C boot_managers -f Makefile
