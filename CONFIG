@@ -83,7 +83,7 @@ CENTOSMETHOD = @MAGICURL@ ip=dhcp
 #
 # 	Note: If left blank this disables Fedora
 
-FEDORA = 6 10.x86_64
+FEDORA = all
 
 # FEDORAMETHOD provides a mechanism to provide the installer with various additional command line
 # options
@@ -108,3 +108,50 @@ FEDORA = 6 10.x86_64
 
 FEDORAMETHOD = @MAGICURL@ ip=dhcp
 
+#
+# Debian
+#
+# DEBIAN defines which versions of Debian you wish to have available this can be:
+# 	- Specific version number E.G.:
+# 		- Debian5.0
+# 		- Debian-3.1
+# 	- Specific version number w/ architecture
+# 		- Debian5.0.amd64
+# 		- Debian-3.1.i386
+# 	- Along with the following 'special' cases:
+# 		all			- Snag all versions, both 32-bit and 64-bit
+# 		all.i386		- Snag all version that are 32-bit
+# 		all.amd64		- Snag all versions that are 64-bit
+# 		all_current		- Snag all current versions, both 32-bit and 64-bit
+# 		all_current.i386	- Snag all current versions that are 32-bit
+# 		all_current.amd64	- Snag all current versions that are 64-bit
+# 		all_archive		- Snag all archive versions, both 32-bit and 64-bit
+# 		all_archive.i386	- Snag all archive versions that are 32-bit
+# 		all_archive.amd64	- Snag all archive versions thare are 64-bit
+#
+#	Note: Debian is has some issues with it's numbering schema, please pay close attention
+#		- Please look at http://mirrors.kernel.org/debian/dists/ or http://archive.debian.org/debian-archive/debian/dists/
+#		  to find the exact format of the version you are looking for, but the general rule seems to be:
+#			- Before Debian 5.0 & 4.0r7 the format is Debian-<version number>
+#				- Debian-0.93R6
+#				- Debian-1.1
+#				- Debian-2.0
+#				- Debian-3.1
+#			- After 5.0 and 4.0r7 the format seems to have changed to Debian<version number>
+#				- Debian5.0
+#				- Debian4.0r7
+#		- Also note you can use the canonical names for releases like:
+#			- sarge
+#			- woody
+#			- slink
+#			- rex
+#			- potatoe
+#			- buzz
+#			etc
+#
+# 	Note: This is a space delimited list, quotes are not needed E.G.:
+# 		DEBIAN = buzz sarge.i386 all_current Debian-093R6.amd64
+#
+# 	Note: If left blank this disables Fedora
+
+DEBIAN = stable

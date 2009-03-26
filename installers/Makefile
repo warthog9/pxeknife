@@ -19,6 +19,10 @@ ifdef FEDORA
 DIRS := $(DIRS) fedora
 endif
 
+ifdef DEBIAN
+DIRS := $(DIRS) debian
+endif
+
 all: make_statement configfile $(DIRS)
 
 make_statement:
