@@ -1,14 +1,26 @@
 SHELL = /bin/bash
 
-.SILENT:
+#.SILENT:
 
-.PHONY: centos
+#.PHONY: centos centos_clean
 
-all: make_statement centos
+ifdef CONFIG
+include $(CONFIG)
+NEWCONFIG="../$(CONFIG)"
+else
+NEWCONFIG=""
+endif
+
+ifdef CENTOS
+DIRS := $(DIRS) centos
+endif
+
+all: make_statement configfile $(DIRS)
 
 make_statement:
 	echo "--> Generating Installers"
 
-centos: make_statement
-	$(MAKE) $(MFLAGS) CONFIG="$(NEWCONFIG)" -C centos -f Makefile
+$(DIRS): make_statement
+	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="$(NEWCONFIG)" -C $@ -f Makefile
+
 
