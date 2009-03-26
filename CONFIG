@@ -152,6 +152,6 @@ FEDORAMETHOD = @MAGICURL@ ip=dhcp
 # 	Note: This is a space delimited list, quotes are not needed E.G.:
 # 		DEBIAN = buzz sarge.i386 all_current Debian-093R6.amd64
 #
-# 	Note: If left blank this disables Fedora
+# 	Note: If left blank this disables Debian
 
 DEBIAN = stable
