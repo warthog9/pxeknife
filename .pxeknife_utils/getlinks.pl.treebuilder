@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+use LWP::Simple;
+use HTML::TreeBuilder;
+
+my $tree = HTML::TreeBuilder->new();
+
+#my $doc = get("http://mirrors.kernel.org/centos/");
+my $doc = get($ARGV[0]);
+
+$tree->parse($doc);
+$tree->eof();
+#$tree->dump;
+
+my @atags = $tree->find('a');
+
+foreach $tag (@atags){
+	print $tag->as_text() ."\n";
+}
+
+$tree->delete;
