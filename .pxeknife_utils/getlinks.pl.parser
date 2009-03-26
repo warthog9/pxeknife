@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use LWP::UserAgent;
+use HTML::LinkExtor;
+use URI::URL;
+
+#$url = "http://mirrors.kernel.org/fedora/releases/";
+$url = @ARGV[0];
+$ua = LWP::UserAgent->new;
+
+$parselinks = HTML::LinkExtor->new();
+
+$result = $ua->request(HTTP::Request->new(GET => $url), sub { $parselinks->parse($_[0])});
+
+#print $parselinks->links();
+foreach $tagpair ( $parselinks->links() ){
+#	foreach $tagpii ( $tagpair ){
+#		print "\t". $tagpii 
+#	}
+	my ($tag, %attr) = @$tagpair;
+	#print "tag: ". $tag ." | attr: ". %attr ."\n";
+	if ( "$tag" eq "a" ){
+		#print "tag: ". $tag ."\n";
+		while( ($key, $value) = each(%attr) ){
+			#print "\t". $key ." | ". $value ."\n";
+			if ( "$key" eq "href" ){
+				print $value ."\n";
+			}
+		}
+	}
+}

@@ -1,1 +1,1 @@
-getlinks.pl.treebuilder
+getlinks.pl.parser
