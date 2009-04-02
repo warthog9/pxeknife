@@ -23,6 +23,10 @@ ifdef DEBIAN
 DIRS := $(DIRS) debian
 endif
 
+ifdef UBUNTU
+DIRS := $(DIRS) ubuntu
+endif
+
 configfile = label @LABEL@\n \
 	     \tMENU LABEL @DISTRO@ \n \
 	     \tKERNEL menu.c32 \n \

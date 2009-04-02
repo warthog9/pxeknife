@@ -155,3 +155,38 @@ FEDORAMETHOD = @MAGICURL@ ip=dhcp
 # 	Note: If left blank this disables Debian
 
 DEBIAN = stable
+
+#
+# UBUNTU
+#
+# UBUNTU defines which versions of UBUNTU you wish to have available this can be:
+# 	- Specific version number E.G.:
+# 		- edgy
+# 		- hardy
+# 	- Specific version number w/ architecture
+# 		- hardy.amd64
+# 		- edgy.i386
+# 	- Along with the following 'special' cases:
+# 		all			- Snag all versions, both 32-bit and 64-bit
+# 		all.i386		- Snag all version that are 32-bit
+# 		all.amd64		- Snag all versions that are 64-bit
+# 		all_current		- Snag all current versions, both 32-bit and 64-bit
+# 		all_current.i386	- Snag all current versions that are 32-bit
+# 		all_current.amd64	- Snag all current versions that are 64-bit
+# 		all_archive		- Snag all archive versions, both 32-bit and 64-bit
+# 		all_archive.i386	- Snag all archive versions that are 32-bit
+# 		all_archive.amd64	- Snag all archive versions thare are 64-bit
+#
+#	Note: Ubuntu unfortunately doesn't make it easy to figure out the numberic 
+#	      releases from their diretory structure, at this time only the name of
+#	      the release is available
+#			- hardy
+#			- warty
+#			etc
+#
+# 	Note: This is a space delimited list, quotes are not needed E.G.:
+# 		Ubuntu = hardy warty.i386 all_current fiesty.amd64
+#
+# 	Note: If left blank this disables Ubuntu
+
+UBUNTU = all
