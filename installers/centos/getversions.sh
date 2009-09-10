@@ -22,7 +22,7 @@ do
 			ANCIENT="$( echo "$list" | grep "^2" | tr "\n" " " )"
 			;;
 		VAULTURL)
-			VAULT="$( echo "$list" | tr "\n" " " )"
+			VAULT="$( echo "$list" | grep -v "^2" |  tr "\n" " " )"
 			;;
 		CURRENTURL)
 			CURRENT="$( echo "$list" | grep -v "^2\|$(echo "${VAULT}" | sed 's/\s/\\|/gi' | sed 's/\\|$//' )" | tr "\n" " " )"
