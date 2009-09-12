@@ -36,6 +36,7 @@ all: make_statement configfile $(DIRS)
 
 make_statement:
 	echo "--> Generating Installers"
+
 configfile: $(DIRS) installers.conf
 installers.conf: $(subst %,%/%.conf,$(DIRS))
 	cat /dev/null > $@; \
@@ -56,6 +57,7 @@ $(DIRS): make_statement
 	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="$(NEWCONFIG)" -C $@ -f Makefile
 
 clean: make_statement $(patsubst %,%.clean,$(DIRS))
+	-rm -rf *.conf
 
 $(patsubst %,%.clean,$(DIRS)):
 	$(MAKE) $(MFLAGS) ABSPATH="$(ABSPATH)/$@" CONFIG="$(NEWCONFIG)" -C $(patsubst %.clean,%,$@) -f Makefile clean

@@ -194,3 +194,5 @@ UBUNTU = all
 MEMTEST86PLUS = enabled
 
 MEMTEST86 = enabled
+
+SUPERGRUBDISK = latest

@@ -18,7 +18,7 @@ export PXEKNIFEPREFIX
 .SILENT:
 
 #DIRS = boot_managers hard_drive_utils knoppix linux_boot_disks memory_test ntfs_tools random_utils system_information installers
-DIRS = installers memory_test
+DIRS = installers memory_test boot_managers
 
 configfile = label @LABEL@\n \
 	     \tMENU LABEL @DISTRO@ \n \
@@ -29,6 +29,7 @@ configfile = label @LABEL@\n \
 all: make_statement $(DIRS)
 
 clean: make_statement $(patsubst %,%.clean,$(DIRS))
+	-rm -rf pxeknife.conf
 
 make_statement:
 	echo "Hello World!"
