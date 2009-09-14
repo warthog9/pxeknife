@@ -18,7 +18,7 @@ export PXEKNIFEPREFIX
 .SILENT:
 
 #DIRS = boot_managers hard_drive_utils knoppix linux_boot_disks memory_test ntfs_tools random_utils system_information installers
-DIRS = installers memory_test boot_managers
+DIRS = installers memory_test boot_managers linux_boot_disks
 
 configfile = label @LABEL@\n \
 	     \tMENU LABEL @DISTRO@ \n \
