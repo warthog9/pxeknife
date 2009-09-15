@@ -11,6 +11,8 @@ ARCHS = amd64 i386
 
 FILES = vmlinuz initrd.img
 
+MENUTITLE = Ubuntu
+
 WGETOPTS = --reject ".iso,\?" --cut-dirs=2 -e robots=off -nH -np --mirror -q -N -c
 #WGETOPTS = --reject ".iso,\?" --cut-dirs=2 -e robots=off -nH -np --mirror -N -c
 
@@ -55,7 +57,7 @@ clean:
 	-rm -rf $(ALLVERS) ubuntu.conf versions.list
 
 make_statement:
-	echo "----> Aquiring and Setting up Ubuntu Network Installers"
+	echo "----> Aquiring and Setting up $(MENUTITLE) Network Installers"
 
 $(ALLVERS) all: make_statement ARCHIVE CURRENT
 
@@ -67,7 +69,7 @@ ARCHIVE CURRENT : versions.list
 
 
 get_statement:
-	printf "\055-----> Getting Ubuntu %-3s - %-6s\n" "$(_VER)" "$(_ARCH)"
+	printf "\055-----> Getting $(MENUTITLE) %-3s - %-6s\n" "$(_VER)" "$(_ARCH)"
 
 
 $(ALLVERS):
@@ -120,19 +122,36 @@ $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT
 
 		#-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$(shell find -L . -name default | grep "$(_VER)" | grep "$(_ARCH)/netboot" | sed -e 's/\//\\\//gi' -e 's/\/\//\//gi' | awk '{print $1; }' )/' 
 $(patsubst %,%.i386.writeconfig,$(ALLVERS)) $(patsubst %,%.amd64.writeconfig,$(ALLVERS)): dir
+	cat /dev/null > ${_VER}/${_ARCH}/sub.conf; \
+	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
+	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
+	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "MENU TITLE $(MENUTITLE)" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "label UpDir" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "	MENU EXIT" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "label blankspace" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "	MENU LABEL " >> ${_VER}/${_ARCH}/sub.conf; \
 	printf "$(configfile)" | \
 	sed \
-		-e 's/@DISTRO@/Ubuntu/' \
+		-e 's/@DISTRO@/$(MENUTITLE)/' \
 		-e 's/@VERSION@/${_VER}/' \
 		-e 's/@ARCH@/${_ARCH}/' \
 		-e 's/@SYSMENU@/menu.c32/' \
 		-e 's/@LABEL@/$(shell echo ubuntu${_VER}${_ARCH} | sed 's/[\._]//g' )/' \
 		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$$(find -L "$(_VER)/main/installer-$(_ARCH)" -name default | grep -v "current\|netboot/ubuntu")" | sed -e 's/\/\//\//gi' -e 's/\//\\\//gi' )/' \
-		-e 's/\/\.\//\//gi' -e 's/\/\//\//gi' > ${_VER}/${_ARCH}/sub.conf
+		-e 's/\/\.\//\//gi' -e 's/\/\//\//gi' >> ${_VER}/${_ARCH}/sub.conf
 	
 configfile: ubuntu.conf
 ubuntu.conf: $(shell find -name sub.conf)
 	cat /dev/null > $@; \
+	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
+	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
+	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> $@; \
+	echo "MENU TITLE $(MENUTITLE)" >> $@; \
+	echo "label UpDir" >> $@; \
+	echo "	MENU EXIT" >> $@; \
+	echo "label blankspace" >> $@; \
+	echo "	MENU LABEL " >> $@; \
 	for x in $$(find -name sub.conf | sort --field-separator=/ --key=2,2r --key=3,3); \
 	do \
 		cat $${x} >> $@;\

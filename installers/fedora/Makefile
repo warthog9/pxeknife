@@ -11,6 +11,8 @@ ARCHS = x86_64 i386
 
 FILES = vmlinuz initrd.img
 
+MENUTITLE = Fedora
+
 WGETOPTS = -q -N -c
 #WGETOPTS = -c
 
@@ -136,20 +138,37 @@ $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.x86_64.download,$(CURREN
 	$(MAKE) -f $(MAKEFILE_LIST) URL="$(CURRENTURL)" MAGICURL="@URL@/@VERSION@/Fedora/@ARCH@/os/" $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.writeconfig,$(ALLVERS_32bit)) $(patsubst %,%.x86_64.writeconfig,$(ALLVERS_64bit)): dir
+	cat /dev/null > ${_VER}/${_ARCH}/sub.conf; \
+	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
+	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
+	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "MENU TITLE $(MENUTITLE)" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "label UpDir" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "	MENU EXIT" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "label blankspace" >> ${_VER}/${_ARCH}/sub.conf; \
+	echo "	MENU LABEL " >> ${_VER}/${_ARCH}/sub.conf; \
 	printf "$(configfile)" | \
 	sed \
 		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/${_VER}\/${_ARCH}/' \
-		-e 's/@DISTRO@/Fedora/' \
+		-e 's/@DISTRO@/$(MENUTITLE)/' \
 		-e 's/@METHOD@/$(shell echo "${CONFIGMETHOD}" | sed -e 's/\//\\\//gi' )/' \
 		-e 's/@MAGICURL@/$(shell echo "${MAGICURL}" | sed -e 's/\//\\\//gi' )/' \
 		-e 's/@URL@/$(shell echo "${URL}" | sed -e 's/\//\\\//gi' )/' \
 		-e 's/@VERSION@/${_VER}/' \
 		-e 's/@ARCH@/${_ARCH}/' \
-		-e 's/@LABEL@/$(shell echo fedora${_VER}${_ARCH} | sed 's/[\._]//g' )/' > ${_VER}/${_ARCH}/sub.conf
+		-e 's/@LABEL@/$(shell echo fedora${_VER}${_ARCH} | sed 's/[\._]//g' )/' >> ${_VER}/${_ARCH}/sub.conf
 	
 configfile: fedora.conf
 fedora.conf: $(shell find -name sub.conf)
 	cat /dev/null > $@; \
+	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
+	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
+	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> $@; \
+	echo "MENU TITLE $(MENUTITLE)" >> $@; \
+	echo "label UpDir" >> $@; \
+	echo "	MENU EXIT" >> $@; \
+	echo "label blankspace" >> $@; \
+	echo "	MENU LABEL " >> $@; \
 	for x in $$(find -name sub.conf | sort --field-separator=/ --key=2,2r --key=3,3); \
 	do \
 		cat $${x} >> $@;\

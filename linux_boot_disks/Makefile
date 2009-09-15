@@ -17,10 +17,11 @@ ifdef RIP
 DIRS := $(DIRS) rip
 endif
 
-configfile = label @LABEL@\n \
-	     \tMENU LABEL @DISTRO@ \n \
-	     \tKERNEL menu.c32 \n \
-	     \tAPPEND @CONFIGFILE@\n
+#configfile = label @LABEL@\n \
+#	     \tMENU LABEL @DISTRO@ \n \
+#	     \tKERNEL menu.c32 \n \
+#	     \tAPPEND @CONFIGFILE@\n
+configfile = MENU INCLUDE @CONFIGFILE@ @DISTRO@\n
 
 all: make_statement configfile $(DIRS)
 
@@ -30,6 +31,14 @@ make_statement:
 configfile: $(DIRS) linux_boot_disks.conf
 linux_boot_disks.conf: $(subst %,%/%.conf,$(DIRS))
 	cat /dev/null > $@; \
+	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
+	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
+	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> $@; \
+	echo "MENU TITLE Linux Boot Disks" >> $@; \
+	echo "label UpDir" >> $@; \
+	echo "	MENU EXIT" >> $@; \
+	echo "label blankspace" >> $@; \
+	echo "	MENU LABEL " >> $@; \
         for x in $(DIRS); \
         do \
 		if [[ -e "$${x}/$${x}.conf" ]]; \
@@ -38,7 +47,7 @@ linux_boot_disks.conf: $(subst %,%/%.conf,$(DIRS))
 			printf "$(configfile)" | \
 		        sed \
 		                -e "s/@DISTRO@/$${x}/" \
-		                -e "s/@CONFIGFILE@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$${x}\/$${x}.conf/" \
+		                -e "s/@CONFIGFILE@/$${_SUBDIR}\/$${x}\/$${x}.conf/" \
 		                -e "s/@LABEL@/$${x}/" >> $@; \
 		fi \
         done
