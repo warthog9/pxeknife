@@ -13,6 +13,10 @@ ifdef TOMSRTBT
 DIRS := $(DIRS) tomsrtbt
 endif
 
+ifdef RIP
+DIRS := $(DIRS) rip
+endif
+
 configfile = label @LABEL@\n \
 	     \tMENU LABEL @DISTRO@ \n \
 	     \tKERNEL menu.c32 \n \

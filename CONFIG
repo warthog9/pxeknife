@@ -198,3 +198,5 @@ MEMTEST86 = enabled
 SUPERGRUBDISK = latest
 
 TOMSRTBT = latest
+
+RIP = latest
