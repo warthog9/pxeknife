@@ -2,7 +2,7 @@
 # This Basically lets it know where things live in relation to the root directory
 # If you follow the instructions on http://pxeknife.erebor.org this will likely be
 # /pxeknife, for example
-PXEKNIFEPREFIX=/pxeknifetest
+PXEKNIFEPREFIX=/pxeknife
 
 #
 # Centos
