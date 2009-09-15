@@ -110,14 +110,14 @@ $(patsubst %,%.i386.download,$(ARCHIVE)) $(patsubst %,%.amd64.download,$(ARCHIVE
 	#( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/" )
 	wget $(WGETOPTS) "${ARCHIVEURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
 	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/debian-installer/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi'
-	( cd $(_VER)/main/installer-$(_ARCH);ln -s current/images/netboot . )
+	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT)): dir get_statement
 	#( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/" )
 	wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
 	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/debian-installer/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi'
-	( cd $(_VER)/main/installer-$(_ARCH);ln -s current/images/netboot . )
+	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.writeconfig,$(ALLVERS_32bit)) $(patsubst %,%.amd64.writeconfig,$(ALLVERS_64bit)): dir
