@@ -138,15 +138,6 @@ $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.x86_64.download,$(CURREN
 	$(MAKE) -f $(MAKEFILE_LIST) URL="$(CURRENTURL)" MAGICURL="@URL@/@VERSION@/Fedora/@ARCH@/os/" $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.writeconfig,$(ALLVERS_32bit)) $(patsubst %,%.x86_64.writeconfig,$(ALLVERS_64bit)): dir
-	cat /dev/null > ${_VER}/${_ARCH}/sub.conf; \
-	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
-	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
-	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "MENU TITLE $(MENUTITLE)" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "label UpDir" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "	MENU EXIT" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "label blankspace" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "	MENU LABEL " >> ${_VER}/${_ARCH}/sub.conf; \
 	printf "$(configfile)" | \
 	sed \
 		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/${_VER}\/${_ARCH}/' \
@@ -156,7 +147,7 @@ $(patsubst %,%.i386.writeconfig,$(ALLVERS_32bit)) $(patsubst %,%.x86_64.writecon
 		-e 's/@URL@/$(shell echo "${URL}" | sed -e 's/\//\\\//gi' )/' \
 		-e 's/@VERSION@/${_VER}/' \
 		-e 's/@ARCH@/${_ARCH}/' \
-		-e 's/@LABEL@/$(shell echo fedora${_VER}${_ARCH} | sed 's/[\._]//g' )/' >> ${_VER}/${_ARCH}/sub.conf
+		-e 's/@LABEL@/$(shell echo fedora${_VER}${_ARCH} | sed 's/[\._]//g' )/' > ${_VER}/${_ARCH}/sub.conf
 	
 configfile: fedora.conf
 fedora.conf: $(shell find -name sub.conf)

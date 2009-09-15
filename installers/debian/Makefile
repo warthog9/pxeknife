@@ -16,10 +16,11 @@ MENUTITLE = Debian
 WGETOPTS = --reject ".iso,\?" --cut-dirs=2 -e robots=off -nH -np --mirror -q -N -c
 #WGETOPTS = --reject ".iso,\?" --cut-dirs=2 -e robots=off -nH -np --mirror -N -c
 
-configfile = label @LABEL@\n \
-	     \tMENU LABEL @DISTRO@ @VERSION@ @ARCH@\n \
-	     \tKERNEL @SYSMENU@ \n \
-	     \tAPPEND @PATH@\n
+#configfile = label @LABEL@\n \
+#	     \tMENU LABEL @DISTRO@ @VERSION@ @ARCH@\n \
+#	     \tKERNEL @SYSMENU@ \n \
+#	     \tAPPEND @PATH@\n
+configfile = MENU INCLUDE @PATH@ @DISTRO@ @VERSION@ @ARCH@\n
 
 export ABSPATH
 
@@ -122,16 +123,8 @@ $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT
 	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
-$(patsubst %,%.i386.writeconfig,$(ALLVERS_32bit)) $(patsubst %,%.amd64.writeconfig,$(ALLVERS_64bit)): dir
-	cat /dev/null > ${_VER}/${_ARCH}/sub.conf; \
-	_SUBDIR="$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )"; \
-	_BASEDIR="$(PXEKNIFEPREFIX)/"; \
-	echo "MENU INCLUDE $${_BASEDIR}/pxeknife-gui.conf" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "MENU TITLE $(MENUTITLE)" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "label UpDir" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "	MENU EXIT" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "label blankspace" >> ${_VER}/${_ARCH}/sub.conf; \
-	echo "	MENU LABEL " >> ${_VER}/${_ARCH}/sub.conf; \
+		#-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$(shell find -L . -name default | grep "$(_VER)" | grep "$(_ARCH)/netboot" | sed -e 's/\//\\\//gi' -e 's/\/\//\//gi' | awk '{print $1; }' )/' 
+$(patsubst %,%.i386.writeconfig,$(ALLVERS)) $(patsubst %,%.amd64.writeconfig,$(ALLVERS)): dir
 	printf "$(configfile)" | \
 	sed \
 		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$(shell find . -name default | grep -v "debian-installer\|gtk" | grep "$(_VER)" | grep "$(_ARCH)" | sed 's/\//\\\//gi' )/' \
@@ -140,7 +133,7 @@ $(patsubst %,%.i386.writeconfig,$(ALLVERS_32bit)) $(patsubst %,%.amd64.writeconf
 		-e 's/@ARCH@/${_ARCH}/' \
 		-e 's/@SYSMENU@/menu.c32/' \
 		-e 's/@LABEL@/$(shell echo debian${_VER}${_ARCH} | sed 's/[\._]//g' )/' \
-		-e 's/\/\.\//\//gi' -e 's/\/\//\//gi' >> ${_VER}/${_ARCH}/sub.conf
+		-e 's/\/\.\//\//gi' -e 's/\/\//\//gi' > ${_VER}/${_ARCH}/sub.conf
 	
 configfile: debian.conf
 debian.conf: $(shell find -name sub.conf)
