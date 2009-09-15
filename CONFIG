@@ -202,3 +202,5 @@ TOMSRTBT = latest
 RIP = latest
 
 NTPASSWORD = all
+
+PCISNIFFER = latest
