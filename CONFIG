@@ -191,9 +191,9 @@ DEBIAN = stable
 
 UBUNTU = all
 
-MEMTEST86PLUS = enabled
+MEMTEST86PLUS = latest
 
-MEMTEST86 = enabled
+MEMTEST86 = latest
 
 SUPERGRUBDISK = latest
 
