@@ -27,7 +27,7 @@ DIRS = installers memory_test boot_managers linux_boot_disks ntfs_tools system_i
 configfile = MENU INCLUDE @CONFIGFILE@ @DISTRO@\n
 
 
-all: make_statement $(DIRS)
+all: make_statement $(DIRS) configfile
 
 clean: make_statement $(patsubst %,%.clean,$(DIRS))
 	-rm -rf pxeknife.conf
