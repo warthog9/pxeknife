@@ -160,7 +160,7 @@ fedora.conf: $(shell find -name sub.conf)
 	echo "	MENU EXIT" >> $@; \
 	echo "label blankspace" >> $@; \
 	echo "	MENU LABEL " >> $@; \
-	for x in $$(find -name sub.conf | sort --field-separator=/ --key=2,2r --key=3,3); \
+	for x in $$(find -name sub.conf | sort --field-separator=/ --key=2,2rn --key=3,3); \
 	do \
 		cat $${x} >> $@;\
 	done
