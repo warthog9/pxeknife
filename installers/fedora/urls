@@ -1,5 +1,5 @@
-ARCHIVEURL=http://archive.fedoraproject.org/pub/archive/fedora/linux/releases/
-ARCHIVECOREURL=http://archive.fedoraproject.org/pub/archive/fedora/linux/core/
+ARCHIVEURL=http://archive.kernel.org/fedora-archive/releases/
+ARCHIVECOREURL=http://archive.kernel.org/fedora-archive/core/
 CURRENTURL=http://mirrors.kernel.org/fedora/releases/
 CURRENTTESTURL=http://mirrors.kernel.org/fedora/releases/test/
 DEVELOPMENTURL=http://mirrors.kernel.org/fedora/development/
