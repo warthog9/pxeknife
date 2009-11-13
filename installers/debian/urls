@@ -1,2 +1,3 @@
-ARCHIVEURL=http://archive.debian.org/debian-archive/debian/dists/
-CURRENTURL=http://mirrors2.kernel.org/debian/dists/
+#ARCHIVEURL=http://archive.debian.org/debian-archive/debian/dists/
+ARCHIVEURL=http://archive.kernel.org/debian-archive/dists/
+CURRENTURL=http://mirrors.kernel.org/debian/dists/
