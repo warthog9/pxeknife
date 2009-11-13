@@ -191,6 +191,45 @@ DEBIAN = all
 
 UBUNTU = all
 
+#
+# Red Hat
+#
+# REDHAT defines which versions of Red Hat you wish to have available this can be:
+# 	- Specific version number E.G.:
+# 		- 5
+# 		- 5.1
+# 	- Specific version number w/ architecture
+# 		- 5.x86_64
+# 		- 5.i386
+# 	- Along with the following 'special' cases:
+# 		all			- Snag all versions, both 32-bit and 64-bit
+# 		all.i386		- Snag all version that are 32-bit
+# 		all.x86_64		- Snag all versions that are 64-bit
+# 		all_current		- Snag all current versions, both 32-bit and 64-bit
+# 		all_current.i386	- Snag all current versions that are 32-bit
+# 		all_current.x86_64	- Snag all current versions that are 64-bit
+# 		all_vault		- Snag all vault versions, both 32-bit and 64-bit
+# 		all_vault.i386		- Snag all vault versions that are 32-bit
+# 		all_vault.x86_64	- Snag all vault versions thare are 64-bit
+# 		all_ancient		- Snag all 'Ancient' versions (these are only 32-bit)
+# 		all_ancient.i386	- Snag all 'Ancient' versions (these are only 32-bit)
+#
+# 	Note: This is a space delimited list, quotes are not needed E.G.:
+# 		REDHAT = 5.1 5.2.i386 all_ancient
+#
+# 	Note: If left blank this disables Red Hat
+#
+# 	Note: These are the *OLDER* Red Hat versions prior to RHEL and the separation of
+# 	      Fedora into a separate project.  These seem to all be i386 only, thus the .x86_64
+# 	      monikers will likely fail with errors as they targets do not exist.  Also noting
+# 	      that these are *OLD* releases at best, and thus the *_current don't actually apply
+# 	      to anything, as there is nothing current ;-)
+#
+# 	      Further noting that Version 6.* are the only versions in ancient and 7-9 are present
+# 	      in vault.  Before 6 do not seem to support any network instalation.
+
+REDHAT = all
+
 MEMTEST86PLUS = latest
 
 MEMTEST86 = latest
