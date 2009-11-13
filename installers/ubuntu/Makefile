@@ -109,29 +109,40 @@ endif
 
 $(patsubst %,%.i386.download,$(ARCHIVE)) $(patsubst %,%.amd64.download,$(ARCHIVE)): dir get_statement
 	wget $(WGETOPTS) "${ARCHIVEURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
+	if [[ "$(_VER)" = "warty" ]];then find "$(_VER)/main/installer-$(_ARCH)" -name pxeboot.tar.gz -execdir tar -xzf {} \;;fi
 	#find "$(_VER)/main/installer-$(_ARCH)" -type f | grep "$(_ARCH)/netboot" | xargs sed -i 's/[ \t]*ubuntu-installer/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/ubuntu-installer" | sed -e 's/\//\\\//gi' )/gi'
-	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/\([^/]\)ubuntu-installer/\1$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/ubuntu-installer" | sed -e 's/\//\\\//gi' )/gi'
-	-( cd $(_VER)/main/installer-$(_ARCH);ln -s current/images/netboot . )
+	if [[ -d $(_VER)/main/installer-$(_ARCH) ]];then \
+		find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/\([^/]\)\(ubuntu\|debian\)-installer/\1$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/\2-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'; \
+	fi
+	-( if [[ -d $(_VER)/main/installer-$(_ARCH) ]];then cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT)): dir get_statement
 	wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
+	if [[ "$(_VER)" = "warty" ]];then find "$(_VER)/main/installer-$(_ARCH)" -name pxeboot.tar.gz -execdir tar -xzf {} \;;fi
 	#find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/[ \t]*ubuntu-installer/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/ubuntu-installer/" | sed -e 's/\//\\\//gi' )/gi'
-	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/\([^/]\)ubuntu-installer/\1$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/ubuntu-installer" | sed -e 's/\//\\\//gi' )/gi'
-	-( cd $(_VER)/main/installer-$(_ARCH);ln -s current/images/netboot . )
+	if [[ -d "$(_VER)/main/installer-$(_ARCH)" ]];then \
+		find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/\([^/]\)\(ubuntu\|debian\)-installer/\1$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/\2-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'; \
+	fi
+	-( if [[ -d $(_VER)/main/installer-$(_ARCH) ]];then cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 		#-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$(shell find -L . -name default | grep "$(_VER)" | grep "$(_ARCH)/netboot" | sed -e 's/\//\\\//gi' -e 's/\/\//\//gi' | awk '{print $1; }' )/' 
 $(patsubst %,%.i386.writeconfig,$(ALLVERS)) $(patsubst %,%.amd64.writeconfig,$(ALLVERS)): dir
-	printf "$(configfile)" | \
-	sed \
-		-e 's/@DISTRO@/$(MENUTITLE)/' \
-		-e 's/@VERSION@/${_VER}/' \
-		-e 's/@ARCH@/${_ARCH}/' \
-		-e 's/@SYSMENU@/menu.c32/' \
-		-e 's/@LABEL@/$(shell echo ubuntu${_VER}${_ARCH} | sed 's/[\._]//g' )/' \
-		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$$(find -L "$(_VER)/main/installer-$(_ARCH)" -name default | grep -v "current\|netboot/ubuntu")" | sed -e 's/\/\//\//gi' -e 's/\//\\\//gi' )/' \
-		-e 's/\/\.\//\//gi' -e 's/\/\//\//gi' > ${_VER}/${_ARCH}/sub.conf
+	if [[ -d "$(_VER)/main/installer-$(_ARCH)" ]];then \
+		printf "$(configfile)" | \
+		sed \
+			-e 's/@DISTRO@/$(MENUTITLE)/' \
+			-e 's/@VERSION@/${_VER}/' \
+			-e 's/@ARCH@/${_ARCH}/' \
+			-e 's/@SYSMENU@/menu.c32/' \
+			-e 's/@LABEL@/$(shell echo ubuntu${_VER}${_ARCH} | sed 's/[\._]//g' )/' \
+			-e "s/@PATH@/$$(echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$$(find -L "$(_VER)/main/installer-$(_ARCH)" -name default | grep -v "current\|netboot/\(ubuntu\|386\|gtk\)")" | sed -e 's/\/\//\//gi' -e 's/\//\\\//gi' )/" \
+			-e 's/\/\.\//\//gi' -e 's/\/\//\//gi' > ${_VER}/${_ARCH}/sub.conf; \
+		if [[ "$$(find -L "$(_VER)/main/installer-$(_ARCH)" -name default | grep -v "current\|netboot/ubuntu" | wc -l )" = "0" ]];then \
+			rm -rf ${_VER}/${_ARCH}/sub.conf; \
+		fi; \
+	fi
 	
 configfile: ubuntu.conf
 ubuntu.conf: $(shell find -name sub.conf)
