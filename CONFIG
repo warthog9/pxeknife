@@ -154,7 +154,7 @@ FEDORAMETHOD = @MAGICURL@ ip=dhcp
 #
 # 	Note: If left blank this disables Debian
 
-DEBIAN = stable
+DEBIAN = all
 
 #
 # UBUNTU
