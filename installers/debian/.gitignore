@@ -1,3 +1,11 @@
 debian.conf
 versions.list
 stable/
+Debian4.0r8/
+Debian5.0.3/
+etch/
+lenny/
+oldstable/
+sid/
+squeeze/
+unstable/
