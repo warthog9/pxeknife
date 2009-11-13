@@ -112,14 +112,14 @@ endif
 $(patsubst %,%.i386.download,$(ARCHIVE)) $(patsubst %,%.amd64.download,$(ARCHIVE)): dir get_statement
 	#( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/" )
 	wget $(WGETOPTS) "${ARCHIVEURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
-	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/debian-installer/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi'
+	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/ debian-installer/ $(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'
 	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT)): dir get_statement
 	#( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/" )
 	wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
-	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i 's/debian-installer/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi'
+	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/ debian-installer/ $(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'
 	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
@@ -127,7 +127,7 @@ $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT
 $(patsubst %,%.i386.writeconfig,$(ALLVERS)) $(patsubst %,%.amd64.writeconfig,$(ALLVERS)): dir
 	printf "$(configfile)" | \
 	sed \
-		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$(shell find . -name default | grep -v "debian-installer\|gtk" | grep "$(_VER)" | grep "$(_ARCH)" | sed 's/\//\\\//gi' )/' \
+		-e 's/@PATH@/$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/" | sed -e 's/\/\//\//gi' -e s'/\//\\\//gi' )\/$(shell find . -name default | grep -v "debian-installer\|gtk" | grep "/$(_VER)/" | grep "$(_ARCH)" | sed 's/\//\\\//gi' )/' \
 		-e 's/@DISTRO@/$(MENUTITLE)/' \
 		-e 's/@VERSION@/${_VER}/' \
 		-e 's/@ARCH@/${_ARCH}/' \
