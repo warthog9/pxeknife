@@ -20,7 +20,7 @@ export ABSPATH
 
 #.SILENT:
 
-.PHONY:
+.PHONY: versions.list
 
 ifdef NTPASSWORD
 buildtarget: $(NTPASSWORD)
