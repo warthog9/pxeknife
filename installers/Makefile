@@ -31,6 +31,10 @@ ifdef REDHAT
 DIRS := $(DIRS) redhat
 endif
 
+ifdef ARCHLINUX
+DIRS := $(DIRS) archlinux
+endif
+
 #configfile = label @LABEL@\n \
 #	     \tMENU LABEL @DISTRO@ \n \
 #	     \tKERNEL menu.c32 \n \

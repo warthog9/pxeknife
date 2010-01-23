@@ -230,6 +230,36 @@ UBUNTU = all
 
 REDHAT = all
 
+#
+# ARCHLINUX
+#
+# ARCHLINUX defines which versions of ArchLinux you wish to have available this can be:
+# 	- Specific version number E.G.:
+# 		- 0.7.2
+# 		- 2007.08
+# 		- latest
+# 	- Specific version number w/ architecture
+# 		- 0.7.2.i686
+# 		- 2007.08.x86_64
+# 		- latest.i686
+# 	- Along with the following 'special' cases:
+# 		all			- Snag all versions, both 32-bit and 64-bit
+# 		all.i686		- Snag all version that are 32-bit
+# 		all.x86_64		- Snag all versions that are 64-bit
+# 		all_current		- Snag all current versions, both 32-bit and 64-bit
+# 		all_current.i686	- Snag all current versions that are 32-bit
+# 		all_current.x86_64	- Snag all current versions that are 64-bit
+# 		all_archive		- Snag all archive versions, both 32-bit and 64-bit
+# 		all_archive.i686	- Snag all archive versions that are 32-bit
+# 		all_archive.x86_64	- Snag all archive versions thare are 64-bit
+#
+# 	Note: This is a space delimited list, quotes are not needed E.G.:
+# 		Ubuntu = 0.7.2 latest.i686 all_current 2007.08.x86_64
+#
+# 	Note: If left blank this disables Archlinux
+
+ARCHLINUX = all
+
 MEMTEST86PLUS = latest
 
 MEMTEST86 = latest
