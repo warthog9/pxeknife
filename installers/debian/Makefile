@@ -31,7 +31,7 @@ CONFIGMETHOD = askmethod
 endif
 
 
-.SILENT:
+#.SILENT:
 
 .PHONY: ARCHIVE ARCHIVECORE CURRENT CURRENTTEST DEVELOPMENT
 
@@ -54,8 +54,12 @@ archive.i386: $(patsubst %,%.i386,$(ARCHIVE))
 archive.amd64: $(patsubst %,%.amd64,$(ARCHIVE))
 archive.x86_64: archive.amd64
 
-clean:
-	-rm -rf $(ALLVERS) debian.conf versions.list
+clean: configclean
+	-rm -rf $(ALLVERS)
+
+configclean:
+	-find \( -name \*.conf -o -name default \) -exec rm -rf {} \;
+	-rm -rf versions.list
 
 make_statement:
 	echo "----> Aquiring and Setting up Debian Network Installers"
@@ -112,14 +116,14 @@ endif
 $(patsubst %,%.i386.download,$(ARCHIVE)) $(patsubst %,%.amd64.download,$(ARCHIVE)): dir get_statement
 	#( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/" )
 	wget $(WGETOPTS) "${ARCHIVEURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
-	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/ debian-installer/ $(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'
+	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/\([ =]\)debian-installer/\1$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'
 	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 $(patsubst %,%.i386.download,$(CURRENT)) $(patsubst %,%.amd64.download,$(CURRENT)): dir get_statement
 	#( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/" )
 	wget $(WGETOPTS) "${CURRENTURL}/$(_VER)/main/installer-$(_ARCH)/current/images/netboot/"
-	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/ debian-installer/ $(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'
+	find "$(_VER)/main/installer-$(_ARCH)" -type f | xargs sed -i -e 's/\([ =]\)debian-installer/\1$(shell echo "$(PXEKNIFEPREFIX)/$(ABSPATH)/$(_VER)/main/installer-$(_ARCH)/netboot/debian-installer" | sed -e 's/\//\\\//gi' )/gi' -e '/menu title Installer boot menu/d'
 	( cd $(_VER)/main/installer-$(_ARCH);if [[ ! -e netboot ]];then ln -s current/images/netboot .;fi )
 	$(MAKE) -f $(MAKEFILE_LIST) $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
