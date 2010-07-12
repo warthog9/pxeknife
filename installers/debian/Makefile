@@ -68,7 +68,8 @@ cleanversion:
 	-rm -rf versions.list versions.list.*
 
 make_statement:
-	echo "----> Aquiring and Setting up Debian Network Installers"
+	echo "----> Aquiring and Setting up $(MENUTITLE) Network Installers"
+
 $(ALLVERS) all: make_statement cleanversion ARCHIVE CURRENT versions.list versions.list.temp
 
 versions.list: versions.list.temp
