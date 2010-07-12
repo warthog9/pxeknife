@@ -25,8 +25,8 @@ export ABSPATH
 
 .INTERMEDIATE: versions.list.temp
 
-ifdef TOMSRTBT
-buildtarget: $(TOMSRTBT)
+ifdef RIP
+buildtarget: $(RIP)
 else
 buildtarget: $(ALLVERS)
 endif
