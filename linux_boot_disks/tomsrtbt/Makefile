@@ -59,7 +59,7 @@ cleanversion:
 	-rm -rf versions.list versions.list.*
 
 make_statement:
-	echo "----> Aquiring and Setting up Super Grub Disk"
+	echo "----> Aquiring and Setting up Toms Root & Boot"
 
 configfile: tomsrtbt.conf
 tomsrtbt.conf:
