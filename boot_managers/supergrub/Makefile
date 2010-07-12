@@ -20,7 +20,9 @@ export ABSPATH
 
 #.SILENT:
 
-.PHONY:
+.INTERMEDIATE: versions.list.temp
+
+.PHONY: clean cleanconfig cleanversion
 
 ifdef SUPERGRUBDISK
 buildtarget: $(SUPERGRUBDISK)
@@ -31,25 +33,35 @@ endif
 all: $(ALLVERS) make_statement
 latest: $(ALLVERS) make_statement
 
-$(ALLVERS): make_statement
+
+clean: cleanconfig cleanversion
+	-rm -rf super_grub_disk* sgd_floppy_* versions.list
+
+cleanconfig: cleanversion
+	-rm -rf supergrub.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
+
+make_statement:
+	echo "----> Aquiring and Setting up Super Grub Disk"
+
+versions.list: versions.list.temp
+	touch $@
+
+versions.list.temp:
+	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
+
+
+$(ALLVERS): make_statement versions.list versions.list.temp
 	printf "\055-----> Getting Super Grub Disk %-3s\n" "$@"
 	wget $(WGETOPTS) $(SUPERGRUBDISKURL)/$@
 	if [[ "$(shell echo "$@" | awk 'BEGIN { FS="."; } ; { print $$NF;}')" = "gz" ]]; \
 	then gunzip -f $@;fi
 	-rm -rf supergrub.conf
 	$(MAKE) $(MFLAGS) -f $(MAKEFILE_LIST) configfile
-
-versions.list:
-	./getversions.sh > $@
-
-clean: cleanconfig
-	-rm -rf super_grub_disk* sgd_floppy_* versions.list
-
-cleanconfig:
-	-rm -rf supergrub.conf
-
-make_statement:
-	echo "----> Aquiring and Setting up Super Grub Disk"
 
 configfile: supergrub.conf
 supergrub.conf:
