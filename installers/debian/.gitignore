@@ -3,6 +3,8 @@ versions.list
 stable/
 Debian4.0r8/
 Debian5.0.3/
+Debian[0-9].*
+Debian-[0-9].*
 etch/
 lenny/
 oldstable/
