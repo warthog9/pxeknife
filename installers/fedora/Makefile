@@ -16,6 +16,8 @@ MENUTITLE = Fedora
 WGETOPTS = -q -N -c
 #WGETOPTS = -c
 
+PID = $$PPID
+
 
 configfile = label @LABEL@\n \
 	     \tMENU LABEL @DISTRO@ @VERSION@ @ARCH@\n \
@@ -35,6 +37,12 @@ endif
 
 .PHONY: ARCHIVE ARCHIVECORE CURRENT CURRENTTEST DEVELOPMENT
 
+#.PHONY: versions.list
+
+.INTERMEDIATE: versions.list.temp
+
+.PHONY: clean cleanconfig cleanversion
+
 ifdef FEDORA
 buildtarget: $(FEDORA) fedora.conf
 else
@@ -52,16 +60,27 @@ all_current.i386: $(patsubst %,%.i386,$(CURRENT))
 all_current.x86_64: $(patsubst %,%.x86_64,$(CURRENT))
 
 
-clean:
-	-rm -rf $(ALLVERS) fedora.conf versions.list
+clean: cleanconfig cleanversion
+	-rm -rf $(ALLVERS)
+
+cleanconfig: cleanversion
+	-rm -rf fedora.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
-	echo "----> Aquiring and Setting up Centos Network Installers"
+	echo "----> Aquiring and Setting up Fedora Network Installers"
 
-$(ALLVERS) all: make_statement ARCHIVE ARCHIVECORE CURRENT CURRENTTEST DEVELOPMENT
+$(ALLVERS) all: make_statement ARCHIVE ARCHIVECORE CURRENT CURRENTTEST DEVELOPMENT versions.list versions.list.temp
 
-versions.list:
+versions.list: versions.list.temp
+	touch $@
+
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
 ARCHIVE ARCHIVECORE CURRENT CURRENTTEST DEVELOPMENT: versions.list
 	echo "Versions in $@ Found: $($@)"

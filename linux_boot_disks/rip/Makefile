@@ -21,7 +21,9 @@ export ABSPATH
 
 #.SILENT:
 
-.PHONY:
+.PHONY: clean cleanconfig cleanversion
+
+.INTERMEDIATE: versions.list.temp
 
 ifdef TOMSRTBT
 buildtarget: $(TOMSRTBT)
@@ -32,7 +34,7 @@ endif
 all: $(ALLVERS) make_statement
 latest: $(LATEST) make_statement
 
-$(ALLVERS): make_statement
+$(ALLVERS): make_statement versions.list versions.list.temp
 	printf "\055-----> Getting Recovery Is Possible (RIP) %-3s\n" "$@"
 	wget $(WGETOPTS) $(RIPURL)/$@
 	if [[ "$(shell echo "$@" | awk 'BEGIN { FS="."; } ; { print $$NF;}')" = "zip" ]]; \
@@ -40,14 +42,22 @@ $(ALLVERS): make_statement
 	-rm -rf rip.conf
 	$(MAKE) $(MFLAGS) -f $(MAKEFILE_LIST) configfile
 
-versions.list:
+versions.list: versions.list.temp
+	touch versions.list
+
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
-clean: cleanconfig
-	-rm -rf rip* RIP* tftpboot versions.list
+clean: cleanconfig cleanversion
+	-rm -rf rip* RIP* tftpboot
 
-cleanconfig:
+cleanconfig: cleanversion
 	-rm -rf rip.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Recovery Is Possible (RIP)"

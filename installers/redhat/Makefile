@@ -47,11 +47,13 @@ CONFIGMETHOD = askmethod
 endif
 
 
-#.SILENT:
+.SILENT:
 
 .PHONY: GETVAULT GETCURRENT
 
+.INTERMEDIATE: versions.list.temp
 
+.PHONY: clean cleanconfig cleanversion
 
 ifdef REDHAT
 buildtarget: $(REDHAT) redhat.conf
@@ -71,16 +73,27 @@ all_current.x86_64: $(patsubst %,%.x86_64,$(CURRENT))
 all_ancient all_ancient.i386: $(ANCIENT)
 
 
-clean:
-	-rm -rf $(ANCIENT) $(VAULT) $(CURRENT) redhat.conf versions.list
+clean: cleanconfig cleanversion
+	-rm -rf $(ANCIENT) $(VAULT) $(CURRENT)
+
+cleanconfig: cleanversion
+	-rm -rf redhat.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Red Hat Network Installers"
 
-$(ALLVERS) all: make_statement GETVAULT GETCURRENT GETANCIENT
+$(ALLVERS) all: make_statement GETVAULT GETCURRENT GETANCIENT versions.list versions.list.temp
 
-versions.list:
+versions.list: versions.list.temp
+	touch versions.list
+
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
 GETVAULT: versions.list
 	echo "Versions in Vault Found: $(VAULT)"

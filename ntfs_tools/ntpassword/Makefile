@@ -18,9 +18,9 @@ configfile = label @LABEL@\n \
 
 export ABSPATH
 
-#.SILENT:
+.SILENT:
 
-.PHONY: versions.list
+.INTERMEDIATE: versions.list.temp
 
 ifdef NTPASSWORD
 buildtarget: $(NTPASSWORD)
@@ -39,17 +39,25 @@ $(ALLVERS): make_statement
 	-rm -rf ntpassword.conf
 	$(MAKE) $(MFLAGS) -f $(MAKEFILE_LIST) configfile
 
-versions.list:
-	./getversions.sh > $@
-
-clean: cleanconfig
+clean: cleanconfig cleanversion
 	-rm -rf cd* bd* install.bat rawrite2.exe versions.list
 
-cleanconfig:
+cleanconfig: cleanversion
 	-rm -rf ntpassword.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up NT Password Recovery"
+
+versions.list: versions.list.temp
+	touch versions.list
+
+versions.list.temp:
+	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
 configfile: ntpassword.conf
 ntpassword.conf:

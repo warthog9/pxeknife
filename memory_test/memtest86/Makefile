@@ -17,9 +17,13 @@ configfile = label @LABEL@\n \
 
 export ABSPATH
 
-#.SILENT:
+.SILENT:
 
 .PHONY:
+
+.INTERMEDIATE: versions.list.temp
+
+.PHONY: clean cleanconfig cleanversion
 
 ifdef MEMTEST86PLUS
 buildtarget: $(MEMTEST86PLUS)
@@ -30,21 +34,28 @@ endif
 all: $(ALLVERS) make_statement
 latest: $(LATEST) make_statement
 
-$(ALLVERS): make_statement
+$(ALLVERS): make_statement versions.list versions.list.temp
 	printf "\055-----> Getting Memtest86+ %-3s\n" "$@"
 	wget $(WGETOPTS) $(MEMTEST86BASEURL)/$(shell curl --silent -A "Mozilla/4.0" http://www.memtest86.com/download.html | grep "tar.gz" | tr " " "\n" | tr '"' "\n" | grep memtest | grep "$@" )
 	tar -xzvf $$( ls *$@*.tar.gz )
-	-(cd memtest86-$@;ln -s precomp.bin memtest86-$@ )
+	-(cd memtest86-$@;ln -s precomp.bin memtest86-$@ &> /dev/null )
 	$(MAKE) -f $(MAKEFILE_LIST) configfile
 
-versions.list:
-	verlist=$$( curl -A "Mozilla/4.0" http://www.memtest86.com/download.html | grep "tar.gz" | tr " " "\n" | tr '"' "\n" | grep memtest | sed -e 's/memtest86-//' -e 's/\.tar\.gz//' | sort -r ); printf "ALLVERS = %s\nLATEST = %s" "$$(echo "$${verlist}" | tr "\n" " ")" "$$(echo "$${verlist}" | head -n 1)" > $@
+versions.list: versions.list.temp
+	touch $@
+
+versions.list.temp:
+	verlist=$$( curl -A "Mozilla/4.0" http://www.memtest86.com/download.html | grep "tar.gz" | tr " " "\n" | tr '"' "\n" | grep memtest | sed -e 's/memtest86-//' -e 's/\.tar\.gz//' | sort -r ); printf "ALLVERS = %s\nLATEST = %s" "$$(echo "$${verlist}" | tr "\n" " ")" "$$(echo "$${verlist}" | head -n 1)" > versions.list
+	touch $@
 
 clean: cleanconfig
-	-rm -rf memtest86* versions.list
+	-rm -rf memtest86*
 
-cleanconfig:
+cleanconfig: cleanversion
 	-rm -rf memtest86.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Memtest86+"

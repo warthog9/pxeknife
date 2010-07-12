@@ -20,7 +20,9 @@ export ABSPATH
 
 #.SILENT:
 
-.PHONY:
+.PHONY: clean cleanconfig cleanversion
+
+.INTERMEDIATE: versions.list.temp
 
 ifdef TOMSRTBT
 buildtarget: $(TOMSRTBT)
@@ -31,7 +33,7 @@ endif
 all: $(ALLVERS) make_statement
 latest: $(LATEST) make_statement
 
-$(ALLVERS): make_statement
+$(ALLVERS): make_statement versions.list versions.list.temp
 	printf "\055-----> Getting Toms Root Boot %-3s\n" "$@"
 	wget $(WGETOPTS) $(TOMSRTBTURL)/$@
 	if [[ "$(shell echo "$@" | awk 'BEGIN { FS="."; } ; { print $$NF;}')" = "bz2" ]]; \
@@ -39,14 +41,22 @@ $(ALLVERS): make_statement
 	-rm -rf tomsrtbt.conf
 	$(MAKE) $(MFLAGS) -f $(MAKEFILE_LIST) configfile
 
-versions.list:
+versions.list: versions.list.temp
+	touch versions.list
+
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
-clean: cleanconfig
-	-rm -rf tomsrtbt* versions.list
+clean: cleanconfig cleanversion
+	-rm -rf tomsrtbt*
 
-cleanconfig:
+cleanconfig: cleanversion
 	-rm -rf tomsrtbt.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Super Grub Disk"

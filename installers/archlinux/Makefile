@@ -18,8 +18,8 @@ FILES = vmlinuz initrd.img
 
 MENUTITLE = Archlinux
 
-#WGETOPTS = -q -N -c
-WGETOPTS = -N -c
+WGETOPTS = -q -N -c
+#WGETOPTS = -N -c
 
 ALLVERS = $(ARCHIVE) $(CURRENT)
 ALLVERS_32bit = $(ARCHIVE) $(CURRENT)
@@ -39,11 +39,13 @@ CONFIGMETHOD = askmethod
 endif
 
 
-#.SILENT:
+.SILENT:
 
 .PHONY: GETARCHIVE GETCURRENT
 
+.INTERMEDIATE: versions.list.temp
 
+.PHONY: clean cleanconfig cleanversion
 
 ifdef ARCHLINUX
 buildtarget: $(ARCHLINUX) archlinux.conf
@@ -63,15 +65,26 @@ all_current.x86_64: $(patsubst %,%.x86_64,$(CURRENT))
 
 
 clean:
-	-rm -rf $(ARCHIVE) $(CURRENT) archlinux.conf versions.list
+	-rm -rf $(ARCHIVE) $(CURRENT)
+
+cleanconfig: cleanversion
+	-rm -rf archlinux.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Archlinux Network Installers"
 
-$(ALLVERS) all: make_statement GETARCHIVE GETCURRENT
+$(ALLVERS) all: make_statement GETARCHIVE GETCURRENT versions.list versions.list.temp
 
-versions.list:
+versions.list: versions.list.temp
+	touch versions.list
+
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
 GETARCHIVE: versions.list
 	echo "Versions in Vault Found: $(ARCHIVE)"

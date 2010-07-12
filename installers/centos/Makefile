@@ -40,11 +40,13 @@ CONFIGMETHOD = askmethod
 endif
 
 
-#.SILENT:
+.SILENT:
 
 .PHONY: GETVAULT GETCURRENT GETANCIENT
 
+.INTERMEDIATE: versions.list.temp
 
+.PHONY: clean cleanconfig cleanversion
 
 ifdef CENTOS
 buildtarget: $(CENTOS) centos.conf
@@ -64,16 +66,27 @@ all_current.x86_64: $(patsubst %,%.x86_64,$(CURRENT))
 all_ancient all_ancient.i386: $(ANCIENT)
 
 
-clean:
-	-rm -rf $(ANCIENT) $(VAULT) $(CURRENT) centos.conf versions.list
+clean: cleanconfig cleanversion
+	-rm -rf $(ANCIENT) $(VAULT) $(CURRENT)
+
+cleanconfig: cleanversion
+	-rm -rf centos.conf
+
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Centos Network Installers"
 
-$(ALLVERS) all: make_statement GETVAULT GETCURRENT GETANCIENT
+$(ALLVERS) all: make_statement GETVAULT GETCURRENT GETANCIENT versions.list versions.list.temp
 
-versions.list:
+versions.list: versions.list.temp
+	touch $@
+
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
 GETVAULT: versions.list
 	echo "Versions in Vault Found: $(VAULT)"

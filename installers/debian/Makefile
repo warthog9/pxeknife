@@ -31,9 +31,13 @@ CONFIGMETHOD = askmethod
 endif
 
 
-#.SILENT:
+.SILENT:
 
 .PHONY: ARCHIVE ARCHIVECORE CURRENT CURRENTTEST DEVELOPMENT
+
+.INTERMEDIATE: versions.list.temp
+
+.PHONY: clean cleanconfig cleanversion
 
 ifdef DEBIAN
 buildtarget: $(DEBIAN) debian.conf
@@ -54,27 +58,33 @@ archive.i386: $(patsubst %,%.i386,$(ARCHIVE))
 archive.amd64: $(patsubst %,%.amd64,$(ARCHIVE))
 archive.x86_64: archive.amd64
 
-clean: configclean
+clean: cleanconfig cleanversion
 	-rm -rf $(ALLVERS)
 
-configclean:
+cleanconfig: cleanversion
+	-rm -rf debian.conf
 	-find \( -name \*.conf -o -name default \) -exec rm -rf {} \;
-	-rm -rf versions.list
+cleanversion:
+	-rm -rf versions.list versions.list.*
 
 make_statement:
 	echo "----> Aquiring and Setting up Debian Network Installers"
+$(ALLVERS) all: make_statement cleanversion ARCHIVE CURRENT versions.list versions.list.temp
 
-$(ALLVERS) all: make_statement ARCHIVE CURRENT
+versions.list: versions.list.temp
+	touch versions.list
 
-versions.list:
+versions.list.temp:
 	./getversions.sh > $@
+	mv $@ versions.list
+	touch $@
 
 ARCHIVE CURRENT : versions.list
 	echo "Versions in Vault Found: $($@)"
 
 
 get_statement:
-	printf "\055-----> Getting Debian %-3s - %-6s\n" "$(_VER)" "$(_ARCH)"
+	printf "\055-----> Getting $(MENUTITLE) %-3s - %-6s\n" "$(_VER)" "$(_ARCH)"
 
 1:
 	$(MAKE) -f $(MAKEFILE_LIST) $@.i386 _VER=$@
