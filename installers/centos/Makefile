@@ -67,7 +67,7 @@ all_ancient all_ancient.i386: $(ANCIENT)
 
 
 clean: cleanconfig cleanversion
-	-rm -rf $(ANCIENT) $(VAULT) $(CURRENT)
+	-rm -rf $(ANCIENT) $(VAULT) $(CURRENT) $(EOL)
 
 cleanconfig: cleanversion
 	-rm -rf centos.conf
