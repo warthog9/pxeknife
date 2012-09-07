@@ -18,7 +18,7 @@ do
 			;;
 		CURRENTURL)
 			#CURRENT="$( echo "$list" | grep -i "debian[0-9]\|debian-\|stable\|unstable\|testing\|oldstable\|experimental" | tr "\n" " " )"
-			CURRENT="$( echo "$list" | grep -vi "m68k\|proposed\|updates\|buggy\|/debian" | tr "\n" " " )"
+			CURRENT="$( echo "$list" | grep -vi "m68k\|proposed\|updates\|buggy\|/debian" | grep -v "$( echo "${ARCHIVE}" | sed -e 's/^ *//g' -e 's/ *$//g' -e 's/ /\\|/g' )" | tr "\n" " " )"
 			;;
 	esac
 done
@@ -32,7 +32,7 @@ done
 for x in ARCHIVE CURRENT
 do
 	eval versionlist=\$$x
-	ALLVERS="${ALLVERS} ${versionlist}"
+	ALLVERS="$( echo "${ALLVERS} ${versionlist}" | tr " " "\n" | sort -u | tr "\n" " " | sed -e 's/^ *//g' -e 's/ *$//g' )"
 
 done
 
