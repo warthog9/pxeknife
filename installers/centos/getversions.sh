@@ -62,7 +62,6 @@ do
 			;;
 		CURRENTURL)
 			cur_grep="$( echo "${eol_vers_grep}\|$( echo "${VAULT}" | sed -e 's/\s/\\|/gi' -e 's/\\|$//' -e 's/^\\|//g' )" | sed -e 's/\\|$//' -e 's/^\\|//g' )"
-			echo "cur_grep: ${cur_grep}"
 			CURRENT="$( echo "$list" | grep -v "${cur_grep}" | sed -e 's/\s/\\|/gi' -e 's/\\|$//' -e 's/^\\|//g' | tr "\n" " " )"
 			;;
 	esac
