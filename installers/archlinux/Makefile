@@ -21,9 +21,11 @@ MENUTITLE = Archlinux
 WGETOPTS = -q -N -c
 #WGETOPTS = -N -c
 
+FILTERVERS = 2002.03
+
 ALLVERS = $(ARCHIVE) $(CURRENT)
 ALLVERS_32bit = $(ARCHIVE) $(CURRENT)
-ALLVERS_64bit = $(ARCHIVE) $(CURRENT)
+ALLVERS_64bit = $(filter-out $(FILTERVERS), $(ARCHIVE) $(CURRENT) )
 
 configfile = label @LABEL@\n \
 	     \tMENU LABEL @DISTRO@ @VERSION@ @ARCH@\n \
@@ -55,16 +57,16 @@ endif
 
 all: $(ALLVERS)
 all.i686: $(patsubst %,%.i686,$(ALLVERS))
-all.x86_64: $(patsubst %,%.x86_64,$(ALLVERS))
+all.x86_64: $(filter-out $(FILTERVERS), $(patsubst %,%.x86_64,$(ALLVERS)) )
 all_vault: $(ARCHIVE)
 all_vault.i686: $(patsubst %,%.i686,$(ARCHIVE))
-all_vault.x86_64: $(patsubst %,%.x86_64,$(ARCHIVE))
+all_vault.x86_64: $(filter-out $(FILTERVERS), $(patsubst %,%.x86_64,$(ARCHIVE)) )
 all_current: $(CURRENT)
 all_current.i686: $(patsubst %,%.i686,$(CURRENT))
-all_current.x86_64: $(patsubst %,%.x86_64,$(CURRENT))
+all_current.x86_64: $(filter-out $(FILTERVERS), $(patsubst %,%.x86_64,$(CURRENT)) )
 
 
-clean:
+clean: cleanconfig cleanversion
 	-rm -rf $(ARCHIVE) $(CURRENT)
 
 cleanconfig: cleanversion
@@ -128,19 +130,22 @@ else
 endif
 
 $(patsubst %,%.i686.download,$(ARCHIVE)) $(patsubst %,%.x86_64.download,$(ARCHIVE)): dir get_statement
-	( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "${ARCHIVEURL}/arch-$(_VER)-ftp-$(_ARCH).iso" )
+	if [[ "$$( echo "$(_VER)" | sed -e 's/\.//g' -e 's/^0*//g' )" -gt "200000" && "$$( echo "$(_VER)" | sed -e 's/\.//g' -e 's/^0*//g' )" -le "200803" ]];then \
+		download_file="${ARCHIVEURL}/$(_VER)/$(_ARCH)/$$( perl getlinks.pl "${ARCHIVEURL}/$(_VER)/$(_ARCH)/" | grep "\(ftp\|netinstall\|dual\).iso$$" )"; \
+	elif [[ "$$( echo "$(_VER)" | sed -e 's/\.//g' -e 's/^0*//g' )" -ge "200806" ]];then \
+		download_file="${ARCHIVEURL}/$(_VER)/$$( perl getlinks.pl "${ARCHIVEURL}/$(_VER)/" | grep "\(ftp\|netinstall\|dual\)-$(_ARCH).iso$$" )"; \
+	else \
+		download_file="${ARCHIVEURL}/arch-$(_VER)-ftp-$(_ARCH).iso"; \
+	fi; \
+	( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "$${download_file}"; )
 	$(MAKE) -f $(MAKEFILE_LIST) URL="$(ARCHIVEURL)" MAGICURL="@URL@/@VERSION@/os/@ARCH@/" $(shell echo $@ | sed "s/\.download//" ).writeconfig
 
 
 $(patsubst %,%.i686.download,$(CURRENT)) $(patsubst %,%.x86_64.download,$(CURRENT)): dir get_statement
-	if [[ "$(_VER)" != "latest" && "$$(echo "$(_VER)" | sed 's/\.//')" -lt "200806" ]];then \
-		download_file="${CURRENTURL}/$(_VER)/$(_ARCH)/$$( perl getlinks.pl "${CURRENTURL}/$(_VER)/$(_ARCH)/" | grep "ftp.iso$$" )"; \
-	elif [[ "$(_VER)" != "latest" && "$$(echo "$(_VER)" | sed 's/\.//')" -lt "200908" ]];then \
-		download_file="${CURRENTURL}/$(_VER)/archlinux-$(_VER)-ftp-$(_ARCH).iso"; \
-	elif [[ "$$(echo "$(_VER)" | sed 's/\.//')" = "latest" ]];then \
-		download_file="${CURRENTURL}/$(_VER)/$$( perl getlinks.pl "${CURRENTURL}/$(_VER)/" | grep "\-netinstall-$(_ARCH).iso$$" )"; \
+	if [[ "$$( echo "$(_VER)" | sed -e 's/\.//g' -e 's/^0*//g' )" -lt "200806" && "$$( echo "$(_VER)" | sed -e 's/\.//g' -e 's/^0*//g' )" -gt "200203" ]];then \
+		download_file="${CURRENTURL}/$(_VER)/$(_ARCH)/$$( perl getlinks.pl "${CURRENTURL}/$(_VER)/$(_ARCH)/" | grep "\(ftp\|netinstall\|dual\)\(-$(_ARCH)\)*.iso$$" )"; \
 	else \
-		download_file="${CURRENTURL}/$(_VER)/archlinux-$(_VER)-netinstall-$(_ARCH).iso"; \
+		download_file="${CURRENTURL}/$(_VER)/$$( perl getlinks.pl "${CURRENTURL}/$(_VER)/" | grep "\(full\|ftp\|netinstall\|dual\)\(-$(_ARCH)\)*.iso$$" )"; \
 	fi; \
 	( cd $(_VER)/$(_ARCH)/; wget $(WGETOPTS) "$${download_file}" )
 	$(MAKE) -f $(MAKEFILE_LIST) URL="$(CURRENTURL)" MAGICURL="@URL@/@VERSION@/os/@ARCH@/" $(shell echo $@ | sed "s/\.download//" ).writeconfig
